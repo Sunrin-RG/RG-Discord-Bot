@@ -1,0 +1,9 @@
+// 비워둘 경우 제한 없음
+{
+    "COMMAND": {
+        "users": [],
+        "roles": [],
+        "categories": [],
+        "channels": []
+    }
+}
