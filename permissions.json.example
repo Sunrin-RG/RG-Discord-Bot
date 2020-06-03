@@ -1,7 +1,6 @@
-// 비워둘 경우 제한 없음
 {
-    "COMMAND": {
-        "users": [],
+    "명령 이름": {
+        "users": ["아이디"],
         "roles": [],
         "categories": [],
         "channels": []

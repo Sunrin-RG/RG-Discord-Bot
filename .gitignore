@@ -113,3 +113,4 @@ temp/
 
 # 추가 제외 파일
 permissions.json
+roles.json

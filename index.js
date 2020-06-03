@@ -25,7 +25,7 @@ for (const file of commandFiles) {
 
 client.on("ready", () => {
     // 활동 설정하기
-    client.user.setActivity("RG: Republic of Game");
+    client.user.setActivity(">help 로 알아보기");
 
     console.log(`[!] Discord logged in ${client.user.tag}!`);
 });
