@@ -3,13 +3,13 @@ module.exports = {
     name: "state",
     aliases: ["상태"],
     args: 2,
-    usage: "<멘션> <대기|진행1|진행2|완료>",
+    usage: "<멘션> <대기|면접1|면접2|완료>",
     description: "면접 상태를 변경합니다.",
     help: true,
     argToRole: {
         대기: "waiting",
-        진행1: "interview_1",
-        진행2: "interview_2",
+        면접1: "interview_1",
+        면접2: "interview_2",
         완료: "complete",
     },
     execute(message, args) {
