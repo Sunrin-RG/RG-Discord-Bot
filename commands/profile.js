@@ -15,7 +15,9 @@ module.exports = {
 
         let cells = getInterviewData().filter(function (value) {
             return (
-                value.gs$cell.col == 3 && value.gs$cell.inputValue === args[0]
+                (value.gs$cell.col == 3 &&
+                    value.gs$cell.inputValue === args[0]) ||
+                (value.gs$cell.col == 2 && value.gs$cell.inputValue === args[0])
             );
         });
         if (!cells || !cells.length) {
