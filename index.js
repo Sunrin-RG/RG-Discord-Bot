@@ -7,7 +7,8 @@ const client = new Discord.Client();
 // 설정 불러오기
 const { prefix } = require("./config.json");
 const permissions = require("./permissions.json");
-var interviewData;
+var interviewData = JSON,
+    interviewList = new Array();
 
 // 명령어 파일 불러오기
 client.commands = new Discord.Collection();
@@ -43,6 +44,43 @@ client.on("ready", () => {
             }
 
             interviewData = body.feed.entry;
+
+            fs.stat("interview_list.txt", (error, stats) => {
+                if (!error) {
+                    updateInterviewData();
+                } else if (error.code === "ENOENT") {
+                    var data = new Array();
+
+                    for (let i = 2; true; i++) {
+                        var cells = interviewData.filter(function (value) {
+                            return value.gs$cell.row == i;
+                        });
+                        if (!cells || !cells.length) break;
+
+                        data[
+                            i - 2
+                        ] = `${cells[1].gs$cell.inputValue},${cells[2].gs$cell.inputValue}`;
+                    }
+
+                    fs.writeFile(
+                        "interview_list.txt",
+                        data.join("\n"),
+                        "utf-8",
+                        function (error) {
+                            if (error) {
+                                console.log(`[!] ${error}`);
+                            } else {
+                                console.log(
+                                    "[+] Create 'interview_list.txt' file"
+                                );
+                            }
+                        }
+                    );
+                    updateInterviewData();
+                } else {
+                    return console.log(`[!] ${error}`);
+                }
+            });
         }
     );
 
@@ -151,18 +189,61 @@ client.on("message", (message) => {
     }
 });
 
+function updateInterviewData() {
+    fs.readFile("interview_list.txt", "utf-8", function (error, data) {
+        if (error) {
+            return console.log(`[!] ${error}`);
+        }
+        interviewList = data.split("\n");
+        interviewList.forEach(function (value, index) {
+            interviewList[index] = value.split(",");
+        });
+        console.log(`[!] Interview list updated:`);
+        console.log(interviewList);
+    });
+}
+
 module.exports = {
-    getInterviewData: function () {
+    getInterviewData() {
         return interviewData;
     },
-    getUserFromMention: function (mention) {
+    getInterviewList() {
+        return interviewList;
+    },
+    changeInterviewListOrder(target, index) {
+        if (
+            target < 0 ||
+            index < 0 ||
+            target >= interviewList.length ||
+            index >= interviewList
+        ) {
+            return;
+        }
+
+        var temp = interviewList.splice(target, 1)[0];
+        interviewList.splice(index, 0, temp);
+
+        data = new Array();
+        interviewList.forEach((value, index, array) => {
+            data[index] = value.join(",");
+        });
+        data = data.join("\n");
+
+        fs.writeFileSync("interview_list.txt", data, function (error) {
+            if (error) {
+                return console.log(`[!] ${error}`);
+            }
+        });
+        updateInterviewData();
+    },
+    getUserFromMention(mention) {
         const matches = mention.match(/^<@!?(\d+)>$/);
         if (!matches) return;
 
         const id = matches[1];
         return client.users.cache.get(id);
     },
-    getCommandUsageFromName: function (commandName) {
+    getCommandUsageFromName(commandName) {
         var usage = "";
 
         const command =
@@ -192,10 +273,11 @@ module.exports = {
 
         return usage;
     },
-    getDataFromRow: function (row) {
+    getDataFromRow(row) {
         var cells = interviewData.filter(function (value) {
             return value.gs$cell.row == row;
         });
+        if (!cells || !cells.length) return;
 
         const indexNames = {
             1: "time",
@@ -205,10 +287,10 @@ module.exports = {
             5: "discord",
             6: "major",
             7: "motive",
-            8: "port-file",
-            9: "port-link",
+            8: "port-link",
+            9: "port-file",
         };
-        var user = {};
+        var user = new Object();
         for (let i = 0; i < cells.length; i++) {
             user[indexNames[cells[i].gs$cell.col]] =
                 cells[i].gs$cell.inputValue;
@@ -216,7 +298,7 @@ module.exports = {
 
         return user;
     },
-    getProfileFromData: function (data) {
+    getProfileFromData(data) {
         return new Discord.MessageEmbed()
             .setColor("#2a2b59")
             .setTitle(`${data.index} ${data.name}`)
