@@ -3,8 +3,8 @@ module.exports = {
     name: "state",
     aliases: ["상태"],
     args: 2,
-    usage: "<멘션> <대기|면접1|면접2|완료>",
-    description: "면접 상태를 변경합니다.",
+    usage: ["<멘션> <대기|면접1|면접2|완료>"],
+    description: "학생의 면접 상태를 변경합니다.",
     help: true,
     argToRole: {
         대기: "waiting",

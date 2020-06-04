@@ -3,7 +3,7 @@ module.exports = {
     name: "help",
     aliases: ["도움", "도움말"],
     args: 0,
-    usage: "[명령어]",
+    usage: ["[명령어]"],
     description: "명령어 목록와 사용 방법을 알려줍니다.",
     help: true,
     execute(message, args) {
