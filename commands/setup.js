@@ -30,11 +30,15 @@ module.exports = {
                 nullUser.push(`${user.index} ${user.name}`);
             }
 
+            if (i > 3) continue;
             var channelExists = false;
             message.guild.channels.cache.some((value) => {
                 if (
                     value.name == `${user.index}-${user.name}` &&
-                    value.parentID === channels.interview_memo
+                    value.parentID ===
+                        (i % 2
+                            ? channels.interview_memo_2
+                            : channels.interview_memo_1)
                 ) {
                     channelExists = true;
                 }
@@ -42,7 +46,10 @@ module.exports = {
             if (!channelExists) {
                 message.guild.channels.create(`${user.index}-${user.name}`, {
                     type: "text",
-                    parent: channels.interview_memo,
+                    parent:
+                        i % 2
+                            ? channels.interview_memo_2
+                            : channels.interview_memo_1,
                 });
             }
         }

@@ -3,7 +3,7 @@ module.exports = {
     name: "state",
     aliases: ["상태"],
     args: 2,
-    usage: ["<멘션> <\"대기\"|\"면접1\"|\"면접2\"|\"완료\">"],
+    usage: ['<멘션> <"대기"|"면접1"|"면접2"|"완료">'],
     description: "학생의 면접 상태를 변경합니다.",
     help: true,
     argToRole: {
@@ -14,7 +14,8 @@ module.exports = {
     },
     execute(message, args) {
         const { getUserFromMention } = require("../index");
-        const roles = require("../roles.json");
+        const roles = require("../roles.json"),
+            channels = require("../channels.json");
 
         // 멘션 유효성 검사
         const target = message.guild.member(getUserFromMention(args[0]));
@@ -31,16 +32,11 @@ module.exports = {
             );
         }
 
-        // 다른 역할 지우기
-        for (let name in this.argToRole) {
-            if (
-                args[1] != name &&
-                target.roles.cache.some(
-                    (role) => role.id == roles[this.argToRole[name]]
-                )
-            ) {
-                target.roles.remove(roles[this.argToRole[name]]);
-            }
+        // 면접 완료 확인
+        if (target.roles.cache.some((role) => role.id == roles["complete"])) {
+            return message.reply(
+                `\`${target.nickname}\` 사용자는 이미 \`완료\` 상태입니다!`
+            );
         }
 
         // 역할 중복 검사
@@ -53,6 +49,19 @@ module.exports = {
                 `\`${target.nickname}\` 사용자는 이미 \`${args[1]}\` 상태입니다!`
             );
         }
+
+        // 다른 역할 지우기
+        for (let name in this.argToRole) {
+            if (
+                args[1] != name &&
+                target.roles.cache.some(
+                    (role) => role.id == roles[this.argToRole[name]]
+                )
+            ) {
+                target.roles.remove(roles[this.argToRole[name]]);
+            }
+        }
+
         // 역할 추가
         target.roles.add(roles[this.argToRole[args[1]]]);
         switch (args[1]) {
@@ -60,24 +69,28 @@ module.exports = {
                 message.channel.send(
                     `<@${target.id}> 학생이 \`대기실 > 전체\`로 이동되었습니다.`
                 );
+                message.member.voice.kick();
                 break;
             case "면접1":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`면접 1실\`로 이동되었습니다.`
                 );
                 target.user.send(`면접이 \`면접 1실\`에서 시작되었습니다!`);
+                message.member.voice.setChannel(channels.interview_voice_1);
                 break;
             case "면접2":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`면접 2실\`로 이동되었습니다.`
                 );
                 target.user.send(`면접이 \`면접 2실\`에서 시작되었습니다!`);
+                message.member.voice.setChannel(channels.interview_voice_2);
                 break;
             case "완료":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`대기실 > 완료\`로 이동되었습니다.`
                 );
                 target.user.send(`면접이 종료되었습니다!\n수고하셨습니다 :D`);
+                message.member.voice.kick();
                 break;
         }
     },

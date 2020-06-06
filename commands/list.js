@@ -1,9 +1,12 @@
 module.exports = {
     disable: false,
     name: "list",
-    aliases: ["목록"],
-    args: 0,
-    usage: ["[시작 번호] [끝 번호]", '<"변경"> <대상> <번호>'],
+    aliases: ["리스트", "목록"],
+    args: 1,
+    usage: [
+        '<"전체"|"면접1"|"면접2"> [시작 번호] [끝 번호]',
+        '<"변경"> <대상> <번호>',
+    ],
     description: "학생 목록을 면접 순서대로 보여주거나 면접 순서를 바꿉니다.",
     help: true,
     execute(message, args, state = "") {
@@ -52,26 +55,36 @@ module.exports = {
             var start = 0,
                 end = getInterviewList().length - 1;
 
-            if (args[0]) {
-                args[0] = Number(args[0]);
-                if (args[0] > 1) {
-                    start = args[0] - 1;
+            if (
+                args[0] !== "전체" &&
+                args[0] !== "면접1" &&
+                args[0] !== "면접2"
+            ) {
+                return message.reply(
+                    `${args[0]} 구문은 올바른 분류가 아닙니다!`
+                );
+            }
+
+            if (args[1]) {
+                args[1] = Number(args[1]);
+                if (args[1] > 1) {
+                    start = args[1] - 1;
                     msg += "\u22EE\n";
                 }
 
-                if (args[1]) {
-                    args[1] = Number(args[1]);
+                if (args[2]) {
+                    args[2] = Number(args[2]);
 
-                    if (args[0] > args[1]) {
+                    if (args[1] > args[2]) {
                         return message.reply(
                             "`시작 번호`는 `끝 번호`보다 작아야 합니다!"
                         );
-                    } else if (args[1] <= 0) {
+                    } else if (args[2] <= 0) {
                         return message.reply(
                             "`끝 번호`는 `0`보다 커야 합니다!"
                         );
                     }
-                    end = args[1] - 1;
+                    end = args[2] - 1;
                 }
             }
 
@@ -80,6 +93,8 @@ module.exports = {
                     msg += "\u22EE\n";
                     break;
                 }
+                if (args[0] === "면접1" && i % 2) continue;
+                else if (args[0] === "면접2" && !(i % 2)) continue;
 
                 msg += `${i + 1 < 10 ? 0 : ""}${i + 1}. ${
                     getInterviewList()[i][0]
