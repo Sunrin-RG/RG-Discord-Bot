@@ -50,7 +50,7 @@ module.exports = {
             )
         ) {
             return message.reply(
-                `\`${target.username}\` 사용자는 이미 \`${args[1]}\` 상태입니다!`
+                `\`${target.nickname}\` 사용자는 이미 \`${args[1]}\` 상태입니다!`
             );
         }
         // 역할 추가
@@ -61,13 +61,13 @@ module.exports = {
                     `<@${target.id}> 학생이 \`대기실 > 전체\`로 이동되었습니다.`
                 );
                 break;
-            case "진행1":
+            case "면접1":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`면접 1실\`로 이동되었습니다.`
                 );
                 target.user.send(`면접이 \`면접 1실\`에서 시작되었습니다!`);
                 break;
-            case "진행2":
+            case "면접2":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`면접 2실\`로 이동되었습니다.`
                 );

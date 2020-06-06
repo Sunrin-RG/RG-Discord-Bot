@@ -113,5 +113,6 @@ temp/
 
 # 추가 제외 파일
 permissions.json
+channels.json
 roles.json
 interview_list.txt

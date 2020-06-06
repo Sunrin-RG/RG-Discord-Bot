@@ -104,7 +104,7 @@ client.on("message", (message) => {
     if (!command) return;
 
     // 유저 검사
-    if (true) {
+    if (message.member == message.guild.owner) {
         // 아이디 검사
         if (
             permissions[command.name].users &&
