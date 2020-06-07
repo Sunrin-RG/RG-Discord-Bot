@@ -69,28 +69,28 @@ module.exports = {
                 message.channel.send(
                     `<@${target.id}> 학생이 \`대기실 > 전체\`로 이동되었습니다.`
                 );
-                message.member.voice.kick();
+                target.voice.kick();
                 break;
             case "면접1":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`면접 1실\`로 이동되었습니다.`
                 );
                 target.user.send(`면접이 \`면접 1실\`에서 시작되었습니다!`);
-                message.member.voice.setChannel(channels.interview_voice_1);
+                target.voice.setChannel(channels.interview_voice_1);
                 break;
             case "면접2":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`면접 2실\`로 이동되었습니다.`
                 );
                 target.user.send(`면접이 \`면접 2실\`에서 시작되었습니다!`);
-                message.member.voice.setChannel(channels.interview_voice_2);
+                target.voice.setChannel(channels.interview_voice_2);
                 break;
             case "완료":
                 message.channel.send(
                     `<@${target.id}> 학생이 \`대기실 > 완료\`로 이동되었습니다.`
                 );
                 target.user.send(`면접이 종료되었습니다!\n수고하셨습니다 :D`);
-                message.member.voice.kick();
+                target.voice.kick();
                 break;
         }
     },
